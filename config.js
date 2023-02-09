@@ -11,4 +11,4 @@ export const friendShipRule = /webdyc|小飞蛾|飞蛾/
 export const roomWhiteList = ['小飞蛾交流群']
 
 // 联系人白名单，白名单内的联系人才会自动回复
-export const aliasWhiteList = ['董宇成', '董宇博', '王澜晓', '刘影', '肖金路']
+export const aliasWhiteList = ['张三']
