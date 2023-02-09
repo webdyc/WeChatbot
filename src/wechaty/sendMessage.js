@@ -1,6 +1,6 @@
 // import { getChatGPTReply as getReply } from '../chatgpt/index.js'
 import { getOpenAiReply as getReply } from '../openai/index.js'
-import { botName, roomWhiteList, aliasWhiteList } from '../../config.js'
+import { botName, roomWhiteList, aliasWhiteList, autoReply } from '../../config.js'
 
 /**
  * 默认消息发送
@@ -18,21 +18,26 @@ export async function defaultMessage (msg, bot) {
   const remarkName = await contact.alias() // 备注名称
   const name = await contact.name() // 微信名称
   const isText = msg.type() === bot.Message.Type.Text // 消息类型是否为文本
-  // const isRoom = roomWhiteList.includes(roomName) && content.includes(`${botName}`) // 是否在群聊白名单内并且艾特了机器人
-  const isRoom = roomWhiteList.includes(roomName) // 是否在群聊白名单内并且艾特了机器人
+  const isRoom = roomWhiteList.includes(roomName) && content.includes(`${botName}`) // 是否在群聊白名单内并且艾特了机器人
   const isAlias = aliasWhiteList.includes(remarkName) || aliasWhiteList.includes(name) // 发消息的人是否在联系人白名单内
   const isBotSelf = botName === remarkName || botName === name // 是否是机器人自己
   // TODO 你们可以根据自己的需求修改这里的逻辑
   if (isText && !isBotSelf) {
     try {
       // 区分群聊和私聊
-      if (isRoom && room) {
-        await room.say(await getReply(content.replace(`${botName}`, '')))
-        return
+      if (room) {
+        // 是否开启了自动回复 或者 在群聊白名单内并且艾特了机器人
+        if (isRoom || autoReply) {
+          await room.say(await getReply(content.replace(`${botName}`, '')))
+          return
+        }
       }
-      // 私人聊天，白名单内的直接发送
-      if (isAlias && !room) {
-        await contact.say(await getReply(content))
+      // 私人聊天
+      if (!room) {
+        // 是否开启了自动回复 或者 白名单内的直接发送
+        if (isAlias || autoReply) {
+          await contact.say(await getReply(content))
+        }
       }
     } catch (e) {
       console.error(e)

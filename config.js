@@ -5,7 +5,10 @@ export const botName = '小飞蛾'
 export const friendShipRule = /webdyc|小飞蛾|飞蛾/
 
 // 开启会后收到ChatGPT的自动回复
-// export const autoReply = true
+export const autoReply = true
+
+// 重置上下文的关键词，如可设置为reset
+// export const resetKey = 'reset'
 
 // 群聊白名单，白名单内的群聊才会自动回复
 export const roomWhiteList = ['小飞蛾交流群']

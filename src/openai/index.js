@@ -11,18 +11,25 @@ const openai = new OpenAIApi(configuration)
 
 export async function getOpenAiReply (prompt) {
   console.log('🚀🚀🚀 / prompt', prompt)
-  const response = await openai.createCompletion({
-    model: 'text-davinci-003',
-    prompt: prompt,
-    temperature: 0.9, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）
-    max_tokens: 4000,
-    top_p: 1,
-    frequency_penalty: 0.0,
-    presence_penalty: 0.6,
-    stop: [' Human:', ' AI:'],
-  })
+  let response, reply
+  try {
+    response = await openai.createCompletion({
+      model: 'text-davinci-003',
+      prompt: prompt,
+      temperature: 0.5, // 每次返回的答案的相似度0-1（0：每次都一样，1：每次都不一样）
+      max_tokens: 4000,
+      top_p: 1,
+      frequency_penalty: 0.0,
+      presence_penalty: 0.6,
+      stop: [' Human:', ' AI:'],
+    })
+    reply = markdownToText(response.data.choices[0].text)
+  } catch (e) {
+    console.log('错误', e)
+    reply = markdownToText('emmm...你这个问题太深奥，我要关机啦 ~ 😴😴😴')
+  }
 
-  const reply = markdownToText(response.data.choices[0].text)
+
   console.log('🚀🚀🚀 / reply', reply)
   return reply
 }
